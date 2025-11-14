@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archie's Community - Sudoku</title>
+    <title>Archie's Community - Puzzle</title>
     <style>
         :root {
             --primary-color: #AABFFF;
@@ -11,7 +11,9 @@
             --accent-color: #98FB98;
             --background-color: #FFF9F0;
             --text-color: #5A5A5A;
-            --cell-size: 30px;
+            --tile-size-easy: 80px;
+            --tile-size-medium: 60px;
+            --tile-size-hard: 48px;
         }
 
         * {
@@ -28,42 +30,42 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
 
         .header {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             width: 100%;
-            max-width: 350px;
+            max-width: 500px;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 10px;
             background-image: url('https://tr.rbxcdn.com/180DAY-3289cd85173a33b1b8ec9d54b6327701/150/150/Image/Webp/noFilter');
             background-size: cover;
             background-position: center;
         }
 
         .brand-name {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             color: var(--primary-color);
         }
 
         .game-title {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             color: var(--text-color);
             margin-bottom: 5px;
@@ -71,39 +73,37 @@
 
         .game-container {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 15px;
+            padding: 20px;
             width: 100%;
-            max-width: 350px;
+            max-width: 500px;
         }
 
         .game-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
             background-color: var(--primary-color);
-            border-radius: 6px;
+            border-radius: 8px;
             color: white;
-            font-size: 14px;
         }
 
         .difficulty {
             display: flex;
             justify-content: center;
-            margin-bottom: 12px;
-            gap: 8px;
+            margin-bottom: 15px;
+            gap: 10px;
         }
 
         .difficulty button {
-            padding: 6px 12px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             background-color: #f0f0f0;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 12px;
         }
 
         .difficulty button.active {
@@ -111,152 +111,141 @@
             color: white;
         }
 
-        .board-container {
+        .puzzle-container {
             display: flex;
-            justify-content: center;
-            margin-bottom: 12px;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+            width: 100%;
+            overflow: hidden;
         }
 
-        .board {
+        .puzzle-board {
             display: grid;
-            grid-template-columns: repeat(9, var(--cell-size));
-            grid-template-rows: repeat(9, var(--cell-size));
-            gap: 1px;
-            border: 2px solid #333;
-            width: fit-content;
+            gap: 2px;
+            margin: 0 auto;
+            justify-content: center;
+            background-color: #ddd;
+            padding: 5px;
+            border-radius: 5px;
+            max-width: 100%;
         }
 
-        .cell {
-            width: var(--cell-size);
-            height: var(--cell-size);
-            background-color: white;
-            border: 1px solid #ccc;
+        .puzzle-board.easy {
+            grid-template-columns: repeat(3, var(--tile-size-easy));
+            grid-template-rows: repeat(3, var(--tile-size-easy));
+        }
+
+        .puzzle-board.medium {
+            grid-template-columns: repeat(4, var(--tile-size-medium));
+            grid-template-rows: repeat(4, var(--tile-size-medium));
+        }
+
+        .puzzle-board.hard {
+            grid-template-columns: repeat(5, var(--tile-size-hard));
+            grid-template-rows: repeat(5, var(--tile-size-hard));
+        }
+
+        .tile {
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             cursor: pointer;
             user-select: none;
-            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+            border-radius: 5px;
+            background-color: white;
         }
 
-        .cell:nth-child(3n) {
-            border-right: 2px solid #333;
+        .tile.easy {
+            width: var(--tile-size-easy);
+            height: var(--tile-size-easy);
+            font-size: 24px;
         }
 
-        .cell:nth-child(9n) {
-            border-right: 1px solid #ccc;
+        .tile.medium {
+            width: var(--tile-size-medium);
+            height: var(--tile-size-medium);
+            font-size: 20px;
         }
 
-        .cell:nth-child(n+19):nth-child(-n+27),
-        .cell:nth-child(n+46):nth-child(-n+54) {
-            border-bottom: 2px solid #333;
+        .tile.hard {
+            width: var(--tile-size-hard);
+            height: var(--tile-size-hard);
+            font-size: 16px;
         }
 
-        .cell.prefilled {
-            background-color: #f5f5f5;
-            color: #333;
+        .tile.empty {
+            background-color: transparent;
+            box-shadow: none;
             cursor: default;
         }
 
-        .cell.selected {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .cell.highlighted {
-            background-color: #e6f0ff;
-        }
-
-        .cell.error {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .number-pad {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-            margin-bottom: 12px;
-        }
-
-        .number-btn {
-            padding: 8px;
-            border: none;
-            border-radius: 4px;
-            background-color: #f0f0f0;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        .number-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
+        .tile:hover:not(.empty) {
+            background-color: var(--accent-color);
+            transform: scale(1.05);
         }
 
         .controls {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         button {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             background-color: var(--primary-color);
             color: white;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 12px;
         }
 
         button:hover {
             opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         .game-status {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 15px;
             font-weight: bold;
-            min-height: 20px;
-            font-size: 14px;
+            min-height: 24px;
         }
 
         .win {
             color: green;
         }
 
-        .lose {
-            color: red;
-        }
-
         .instructions {
-            margin-top: 15px;
-            max-width: 350px;
+            margin-top: 20px;
+            max-width: 500px;
             background-color: white;
-            padding: 12px;
-            border-radius: 6px;
+            padding: 15px;
+            border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            font-size: 12px;
         }
 
         .instructions h3 {
             color: var(--primary-color);
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 10px;
         }
 
         .instructions ul {
-            padding-left: 16px;
+            padding-left: 20px;
         }
 
         .instructions li {
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+        }
+
+        .move-counter {
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -266,42 +255,41 @@
             <div class="logo"></div>
             <div class="brand-name">Archie's Community</div>
         </div>
-        <div class="game-title">Sudoku</div>
+        <div class="game-title">Puzzle</div>
     </div>
 
     <div class="game-container">
         <div class="game-info">
+            <div class="moves">Langkah: <span id="moves-counter">0</span></div>
             <div class="timer">Waktu: <span id="timer">0</span>s</div>
-            <div class="hints">Bantuan: <span id="hints">3</span></div>
         </div>
 
         <div class="difficulty">
-            <button id="easy-btn" class="active">Mudah</button>
-            <button id="medium-btn">Sedang</button>
-            <button id="hard-btn">Sulit</button>
+            <button id="easy-btn" class="active">Mudah (3x3)</button>
+            <button id="medium-btn">Sedang (4x4)</button>
+            <button id="hard-btn">Sulit (5x5)</button>
         </div>
 
-        <div class="board-container">
-            <div class="board" id="board"></div>
+        <div class="puzzle-container">
+            <div class="puzzle-board easy" id="puzzle-board"></div>
+            <div class="move-counter">Langkah: <span id="move-counter">0</span></div>
         </div>
-
-        <div class="number-pad" id="number-pad"></div>
 
         <div class="game-status" id="game-status"></div>
 
         <div class="controls">
-            <button id="reset-btn">Reset Game</button>
-            <button id="hint-btn">Bantuan</button>
+            <button id="reset-btn">Acak Ulang</button>
+            <button id="solve-btn">Lihat Solusi</button>
         </div>
     </div>
 
     <div class="instructions">
         <h3>Cara Bermain:</h3>
         <ul>
-            <li>Isi setiap baris, kolom, dan kotak 3x3 dengan angka 1-9</li>
-            <li>Setiap angka hanya boleh muncul sekali di setiap baris, kolom, dan kotak</li>
-            <li>Klik sel untuk memilih, lalu pilih angka dari keypad</li>
-            <li>Gunakan tombol bantuan untuk mendapatkan petunjuk</li>
+            <li>Klik pada ubin yang berdekatan dengan kotak kosong untuk memindahkannya</li>
+            <li>Atur ubin dalam urutan yang benar dari 1 hingga terakhir</li>
+            <li>Kotak kosong harus berada di posisi terakhir</li>
+            <li>Selesaikan puzzle dengan langkah sesedikit mungkin</li>
         </ul>
     </div>
 
@@ -309,34 +297,34 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Game state
             let board = [];
-            let solution = [];
+            let emptyIndex = 0;
             let gameOver = false;
             let gameStarted = false;
             let timer = 0;
             let timerInterval;
-            let selectedCell = null;
-            let difficulty = 'easy';
-            let hintsUsed = 0;
-            const maxHints = 3;
+            let moves = 0;
+            let boardSize = 3; // 3x3, 4x4, 5x5
+            let difficulty = 'easy'; // easy, medium, hard
+            let solvedState = [];
 
             // DOM elements
-            const boardElement = document.getElementById('board');
+            const puzzleBoardElement = document.getElementById('puzzle-board');
+            const movesCounterElement = document.getElementById('moves-counter');
+            const moveCounterElement = document.getElementById('move-counter');
             const timerElement = document.getElementById('timer');
-            const hintsElement = document.getElementById('hints');
             const gameStatusElement = document.getElementById('game-status');
             const resetButton = document.getElementById('reset-btn');
-            const hintButton = document.getElementById('hint-btn');
+            const solveButton = document.getElementById('solve-btn');
             const easyButton = document.getElementById('easy-btn');
             const mediumButton = document.getElementById('medium-btn');
             const hardButton = document.getElementById('hard-btn');
-            const numberPadElement = document.getElementById('number-pad');
 
             // Initialize game
             initGame();
 
             // Event listeners
             resetButton.addEventListener('click', initGame);
-            hintButton.addEventListener('click', giveHint);
+            solveButton.addEventListener('click', showSolution);
             easyButton.addEventListener('click', () => setDifficulty('easy'));
             mediumButton.addEventListener('click', () => setDifficulty('medium'));
             hardButton.addEventListener('click', () => setDifficulty('hard'));
@@ -351,10 +339,13 @@
                 
                 if (level === 'easy') {
                     easyButton.classList.add('active');
+                    boardSize = 3;
                 } else if (level === 'medium') {
                     mediumButton.classList.add('active');
+                    boardSize = 4;
                 } else if (level === 'hard') {
                     hardButton.classList.add('active');
+                    boardSize = 5;
                 }
                 
                 initGame();
@@ -363,126 +354,99 @@
             function initGame() {
                 // Reset game state
                 board = [];
-                solution = [];
                 gameOver = false;
                 gameStarted = false;
                 timer = 0;
-                hintsUsed = 0;
-                selectedCell = null;
+                moves = 0;
                 clearInterval(timerInterval);
                 timerElement.textContent = timer;
-                hintsElement.textContent = maxHints - hintsUsed;
+                movesCounterElement.textContent = moves;
+                moveCounterElement.textContent = moves;
                 gameStatusElement.textContent = '';
                 gameStatusElement.className = 'game-status';
-                hintButton.disabled = false;
 
                 // Clear board
-                boardElement.innerHTML = '';
+                puzzleBoardElement.innerHTML = '';
                 
-                // Create board
-                for (let i = 0; i < 81; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.index = i;
-                    
-                    cell.addEventListener('click', () => handleCellClick(i));
-                    
-                    boardElement.appendChild(cell);
-                    board.push(0);
+                // Set board dimensions and class
+                puzzleBoardElement.className = 'puzzle-board ' + difficulty;
+
+                // Create solved state
+                solvedState = [];
+                for (let i = 1; i < boardSize * boardSize; i++) {
+                    solvedState.push(i);
                 }
-                
-                // Create number pad
-                createNumberPad();
-                
-                // Generate new puzzle
-                generatePuzzle();
+                solvedState.push(0); // Empty tile at the end
+
+                // Create initial board (solved)
+                board = [...solvedState];
+                emptyIndex = boardSize * boardSize - 1;
+
+                // Create tiles
+                createTiles();
+
+                // Shuffle the board
+                shuffleBoard();
             }
 
-            function createNumberPad() {
-                numberPadElement.innerHTML = '';
-                
-                // Create number buttons 1-9
-                for (let i = 1; i <= 9; i++) {
-                    const btn = document.createElement('button');
-                    btn.className = 'number-btn';
-                    btn.textContent = i;
-                    btn.dataset.number = i;
-                    btn.addEventListener('click', () => handleNumberInput(i));
-                    numberPadElement.appendChild(btn);
-                }
-                
-                // Create erase button
-                const eraseBtn = document.createElement('button');
-                eraseBtn.className = 'number-btn';
-                eraseBtn.textContent = 'Hapus';
-                eraseBtn.addEventListener('click', handleErase);
-                numberPadElement.appendChild(eraseBtn);
-            }
-
-            function generatePuzzle() {
-                // Use the provided puzzle from the image
-                const puzzle = [
-                    [0, 7, 5, 0, 1, 3, 0, 0, 0],
-                    [8, 6, 9, 0, 0, 0, 0, 7, 0],
-                    [0, 0, 0, 3, 0, 0, 6, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 4, 0, 0],
-                    [5, 7, 2, 4, 0, 0, 9, 0, 0],
-                    [0, 8, 0, 7, 0, 0, 0, 0, 0],
-                    [0, 6, 5, 2, 0, 0, 1, 0, 0],
-                    [4, 0, 0, 0, 7, 0, 8, 0, 0],
-                    [0, 1, 0, 3, 8, 2, 0, 0, 0]
-                ];
-                
-                // Flatten the puzzle for our board
-                board = [];
-                for (let row of puzzle) {
-                    board.push(...row);
-                }
-                
-                // For this example, we'll use a precomputed solution
-                // In a real implementation, you would solve the puzzle
-                solution = [
-                    [2, 7, 5, 6, 1, 3, 8, 4, 9],
-                    [8, 6, 9, 5, 4, 2, 3, 7, 1],
-                    [1, 4, 3, 7, 9, 8, 6, 2, 5],
-                    [6, 3, 1, 8, 2, 9, 4, 5, 7],
-                    [5, 7, 2, 4, 3, 6, 9, 1, 8],
-                    [9, 8, 4, 1, 5, 7, 2, 6, 3],
-                    [3, 6, 5, 2, 7, 4, 1, 9, 8],
-                    [4, 2, 6, 9, 7, 1, 5, 8, 3],
-                    [7, 1, 8, 3, 6, 5, 9, 2, 4]
-                ].flat();
-                
-                // Update the board display
-                updateBoardDisplay();
-            }
-
-            function updateBoardDisplay() {
-                for (let i = 0; i < 81; i++) {
-                    const cell = boardElement.children[i];
+            function createTiles() {
+                for (let i = 0; i < boardSize * boardSize; i++) {
+                    const tile = document.createElement('div');
+                    tile.className = `tile ${difficulty}`;
                     
-                    if (board[i] !== 0) {
-                        cell.textContent = board[i];
-                        
-                        // Check if this was a prefilled cell
-                        if (solution[i] !== 0 && board[i] === solution[i]) {
-                            cell.classList.add('prefilled');
-                        } else {
-                            cell.classList.remove('prefilled');
-                        }
+                    if (board[i] === 0) {
+                        tile.classList.add('empty');
+                        tile.textContent = '';
                     } else {
-                        cell.textContent = '';
-                        cell.classList.remove('prefilled');
+                        tile.textContent = board[i];
+                        tile.addEventListener('click', createTileClickHandler(i));
                     }
                     
-                    // Remove error class if it's no longer an error
-                    if (cell.classList.contains('error') && board[i] === solution[i]) {
-                        cell.classList.remove('error');
-                    }
+                    tile.dataset.index = i;
+                    puzzleBoardElement.appendChild(tile);
                 }
             }
 
-            function handleCellClick(index) {
+            function createTileClickHandler(index) {
+                return function() {
+                    handleTileClick(index);
+                };
+            }
+
+            function shuffleBoard() {
+                // Make random moves to shuffle the board
+                const shuffleMoves = boardSize === 3 ? 100 : boardSize === 4 ? 200 : 300;
+                
+                for (let i = 0; i < shuffleMoves; i++) {
+                    const possibleMoves = getPossibleMoves();
+                    const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    moveTile(randomMove);
+                }
+                
+                // Reset moves counter after shuffling
+                moves = 0;
+                movesCounterElement.textContent = moves;
+                moveCounterElement.textContent = moves;
+            }
+
+            function getPossibleMoves() {
+                const emptyRow = Math.floor(emptyIndex / boardSize);
+                const emptyCol = emptyIndex % boardSize;
+                const moves = [];
+                
+                // Check up
+                if (emptyRow > 0) moves.push((emptyRow - 1) * boardSize + emptyCol);
+                // Check down
+                if (emptyRow < boardSize - 1) moves.push((emptyRow + 1) * boardSize + emptyCol);
+                // Check left
+                if (emptyCol > 0) moves.push(emptyRow * boardSize + (emptyCol - 1));
+                // Check right
+                if (emptyCol < boardSize - 1) moves.push(emptyRow * boardSize + (emptyCol + 1));
+                
+                return moves;
+            }
+
+            function handleTileClick(index) {
                 if (gameOver) return;
                 
                 if (!gameStarted) {
@@ -494,174 +458,88 @@
                     }, 1000);
                 }
                 
-                // Deselect previous cell
-                if (selectedCell !== null) {
-                    boardElement.children[selectedCell].classList.remove('selected');
-                    clearHighlights();
-                }
-                
-                // Select new cell if it's not prefilled
-                if (!boardElement.children[index].classList.contains('prefilled')) {
-                    selectedCell = index;
-                    boardElement.children[index].classList.add('selected');
-                    highlightRelatedCells(index);
-                } else {
-                    selectedCell = null;
-                }
-            }
-
-            function highlightRelatedCells(index) {
-                const row = Math.floor(index / 9);
-                const col = index % 9;
-                
-                // Highlight row
-                for (let c = 0; c < 9; c++) {
-                    const cellIndex = row * 9 + c;
-                    if (cellIndex !== index) {
-                        boardElement.children[cellIndex].classList.add('highlighted');
-                    }
-                }
-                
-                // Highlight column
-                for (let r = 0; r < 9; r++) {
-                    const cellIndex = r * 9 + col;
-                    if (cellIndex !== index) {
-                        boardElement.children[cellIndex].classList.add('highlighted');
-                    }
-                }
-                
-                // Highlight 3x3 box
-                const boxRow = Math.floor(row / 3) * 3;
-                const boxCol = Math.floor(col / 3) * 3;
-                
-                for (let r = boxRow; r < boxRow + 3; r++) {
-                    for (let c = boxCol; c < boxCol + 3; c++) {
-                        const cellIndex = r * 9 + c;
-                        if (cellIndex !== index) {
-                            boardElement.children[cellIndex].classList.add('highlighted');
-                        }
-                    }
-                }
-            }
-
-            function clearHighlights() {
-                const highlightedCells = document.querySelectorAll('.highlighted');
-                highlightedCells.forEach(cell => {
-                    cell.classList.remove('highlighted');
-                });
-            }
-
-            function handleNumberInput(number) {
-                if (selectedCell === null || gameOver) return;
-                
-                // Check if the move is valid
-                if (isValidMove(selectedCell, number)) {
-                    board[selectedCell] = number;
-                    boardElement.children[selectedCell].textContent = number;
+                // Check if the clicked tile is adjacent to the empty space
+                const possibleMoves = getPossibleMoves();
+                if (possibleMoves.includes(index)) {
+                    moveTile(index);
+                    moves++;
+                    movesCounterElement.textContent = moves;
+                    moveCounterElement.textContent = moves;
                     
-                    // Check if the puzzle is complete
-                    if (isPuzzleComplete()) {
-                        gameOver = true;
-                        clearInterval(timerInterval);
-                        gameStatusElement.textContent = 'Selamat! Anda menyelesaikan Sudoku!';
-                        gameStatusElement.classList.add('win');
-                    }
-                } else {
-                    // Invalid move
-                    boardElement.children[selectedCell].classList.add('error');
-                    setTimeout(() => {
-                        boardElement.children[selectedCell].classList.remove('error');
-                    }, 1000);
+                    // Check for win condition
+                    checkWinCondition();
                 }
             }
 
-            function handleErase() {
-                if (selectedCell === null || gameOver) return;
+            function moveTile(index) {
+                // Swap the clicked tile with the empty space
+                const temp = board[index];
+                board[index] = board[emptyIndex];
+                board[emptyIndex] = temp;
                 
-                board[selectedCell] = 0;
-                boardElement.children[selectedCell].textContent = '';
-                boardElement.children[selectedCell].classList.remove('error');
+                // Update the display
+                const tiles = puzzleBoardElement.children;
+                
+                // Update the tile that was clicked (now becomes empty)
+                tiles[index].classList.add('empty');
+                tiles[index].textContent = '';
+                // Remove event listener from the tile that became empty
+                tiles[index].replaceWith(tiles[index].cloneNode(true));
+                
+                // Update the old empty tile (now has a number)
+                tiles[emptyIndex].classList.remove('empty');
+                tiles[emptyIndex].textContent = board[emptyIndex];
+                // Add event listener to the tile that now has a number
+                const newTile = tiles[emptyIndex].cloneNode(true);
+                newTile.addEventListener('click', createTileClickHandler(emptyIndex));
+                tiles[emptyIndex].replaceWith(newTile);
+                
+                // Update empty index
+                emptyIndex = index;
             }
 
-            function isValidMove(index, num) {
-                const row = Math.floor(index / 9);
-                const col = index % 9;
-                
-                // Check row
-                for (let c = 0; c < 9; c++) {
-                    if (c !== col && board[row * 9 + c] === num) {
-                        return false;
+            function checkWinCondition() {
+                // Check if the board matches the solved state
+                for (let i = 0; i < board.length; i++) {
+                    if (board[i] !== solvedState[i]) {
+                        return;
                     }
                 }
                 
-                // Check column
-                for (let r = 0; r < 9; r++) {
-                    if (r !== row && board[r * 9 + col] === num) {
-                        return false;
-                    }
-                }
-                
-                // Check 3x3 box
-                const boxRow = Math.floor(row / 3) * 3;
-                const boxCol = Math.floor(col / 3) * 3;
-                
-                for (let r = boxRow; r < boxRow + 3; r++) {
-                    for (let c = boxCol; c < boxCol + 3; c++) {
-                        const cellIndex = r * 9 + c;
-                        if (cellIndex !== index && board[cellIndex] === num) {
-                            return false;
-                        }
-                    }
-                }
-                
-                return true;
+                // Puzzle solved!
+                gameOver = true;
+                clearInterval(timerInterval);
+                gameStatusElement.textContent = `Selamat! Anda menyelesaikan puzzle dalam ${moves} langkah dan ${timer} detik!`;
+                gameStatusElement.classList.add('win');
             }
 
-            function isPuzzleComplete() {
-                for (let i = 0; i < 81; i++) {
-                    if (board[i] === 0 || board[i] !== solution[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            function giveHint() {
-                if (gameOver || hintsUsed >= maxHints) return;
+            function showSolution() {
+                // Reset the board to solved state
+                board = [...solvedState];
+                emptyIndex = boardSize * boardSize - 1;
                 
-                // Find an empty cell
-                const emptyCells = [];
-                for (let i = 0; i < 81; i++) {
+                // Update the display
+                const tiles = puzzleBoardElement.children;
+                for (let i = 0; i < board.length; i++) {
                     if (board[i] === 0) {
-                        emptyCells.push(i);
+                        tiles[i].textContent = '';
+                        tiles[i].className = `tile ${difficulty} empty`;
+                        // Remove event listener
+                        tiles[i].replaceWith(tiles[i].cloneNode(true));
+                    } else {
+                        tiles[i].textContent = board[i];
+                        tiles[i].className = `tile ${difficulty}`;
+                        // Add event listener
+                        const newTile = tiles[i].cloneNode(true);
+                        newTile.addEventListener('click', createTileClickHandler(i));
+                        tiles[i].replaceWith(newTile);
                     }
                 }
                 
-                if (emptyCells.length === 0) return;
-                
-                // Select a random empty cell
-                const randomIndex = Math.floor(Math.random() * emptyCells.length);
-                const hintCell = emptyCells[randomIndex];
-                
-                // Fill in the correct number from solution
-                board[hintCell] = solution[hintCell];
-                boardElement.children[hintCell].textContent = solution[hintCell];
-                boardElement.children[hintCell].classList.add('prefilled');
-                
-                hintsUsed++;
-                hintsElement.textContent = maxHints - hintsUsed;
-                
-                if (hintsUsed >= maxHints) {
-                    hintButton.disabled = true;
-                }
-                
-                // Check if the puzzle is complete
-                if (isPuzzleComplete()) {
-                    gameOver = true;
-                    clearInterval(timerInterval);
-                    gameStatusElement.textContent = 'Selamat! Anda menyelesaikan Sudoku!';
-                    gameStatusElement.classList.add('win');
-                }
+                gameStatusElement.textContent = 'Ini adalah solusi puzzle. Klik "Acak Ulang" untuk bermain lagi.';
+                gameStatusElement.classList.remove('win');
+                gameOver = true;
+                clearInterval(timerInterval);
             }
         });
     </script>
